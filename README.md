@@ -17,7 +17,7 @@ Generates migrations, models, events, listeners, and jobs directly into your app
 ## Installation
 
 ```bash
-composer require agentnetwork/laravel-agent-network
+composer require aldiazhar/laravel-agent-network
 ```
 
 ---
