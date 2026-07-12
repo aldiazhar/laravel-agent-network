@@ -265,7 +265,7 @@ public function handle(): void
                 ] as [$path, $name, $desc])
                 <tr style="border-bottom:1px solid rgb(229 231 235)">
                     <td style="padding:8px 12px">
-                        <a href="{{ route('$name') }}" style="color:rgb(99 102 241);font-family:'JetBrains Mono',monospace;text-decoration:none">{{ $path }}</a>
+                        <a href="{{ route($name) }}" style="color:rgb(99 102 241);font-family:'JetBrains Mono',monospace;text-decoration:none">{{ $path }}</a>
                     </td>
                     <td style="padding:8px 12px;color:rgb(75 85 99)">{{ $desc }}</td>
                 </tr>
