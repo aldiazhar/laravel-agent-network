@@ -5,6 +5,7 @@ namespace AgentNetwork;
 use AgentNetwork\Console\InstallCommand;
 use AgentNetwork\Livewire\CommissionRules;
 use AgentNetwork\Livewire\Dashboard;
+use AgentNetwork\Livewire\Guide;
 use AgentNetwork\Livewire\NetworkTree;
 use AgentNetwork\Livewire\PayoutQueue;
 use AgentNetwork\Livewire\SetupWizard;
@@ -30,6 +31,7 @@ class AgentNetworkServiceProvider extends ServiceProvider
         Livewire::component('agent-network-transactions',     Transactions::class);
         Livewire::component('agent-network-network-tree',     NetworkTree::class);
         Livewire::component('agent-network-payout-queue',     PayoutQueue::class);
+        Livewire::component('agent-network-guide',            Guide::class);
 
         $this->registerRoutes();
 
@@ -51,6 +53,7 @@ class AgentNetworkServiceProvider extends ServiceProvider
                 Route::get('/transactions', Transactions::class)->name('transactions');
                 Route::get('/network',      NetworkTree::class)->name('network');
                 Route::get('/payouts',      PayoutQueue::class)->name('payouts');
+                Route::get('/guide',        Guide::class)->name('guide');
             });
     }
 }

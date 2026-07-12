@@ -211,9 +211,13 @@
                class="an-nav-item {{ request()->routeIs('agent-network.setup') ? 'active' : '' }}">
                 <span class="ani">construction</span> Generator
             </a>
+            <a href="{{ route('agent-network.guide') }}"
+               class="an-nav-item {{ request()->routeIs('agent-network.guide') ? 'active' : '' }}">
+                <span class="ani">menu_book</span> Usage Guide
+            </a>
         </nav>
 
-        <div id="an-footer">agentnetwork/laravel-agent-network</div>
+        <div id="an-footer">aldiazhar/laravel-agent-network</div>
     </aside>
 
     {{-- Main --}}
