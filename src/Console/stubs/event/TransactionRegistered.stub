@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Events\AgentNetwork;
+
+use App\Models\AgentNetwork\{EntityName};
+use App\Models\AgentNetwork\Transaction;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+
+class TransactionRegistered
+{
+    use Dispatchable, SerializesModels;
+
+    public function __construct(
+        public readonly {EntityName} ${entityName},
+        public readonly Transaction $transaction,
+    ) {}
+}

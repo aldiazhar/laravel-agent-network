@@ -1,0 +1,117 @@
+<?php
+
+namespace App\Listeners\AgentNetwork;
+
+use App\Events\AgentNetwork\CommissionEarned;
+use App\Events\AgentNetwork\TransactionRegistered;
+use App\Models\AgentNetwork\CommissionLedger;
+use App\Models\AgentNetwork\CommissionRule;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+
+class OnTransactionRegistered implements ShouldQueue
+{
+    use InteractsWithQueue;
+
+    public function handle(TransactionRegistered $event): void
+    {
+        $actor       = $event->{entityName};
+        $transaction = $event->transaction;
+
+        $this->processPersonal($actor, $transaction);
+        $this->processLevel($actor, $transaction);
+        $this->processGroup($actor, $transaction);
+    }
+
+    protected function processPersonal($actor, $transaction): void
+    {
+        $rule = CommissionRule::active()
+            ->where('commission_type', 'personal')
+            ->forType($actor->type)
+            ->first();
+
+        if (! $rule) return;
+
+        $amount = round($transaction->amount * (($rule->conditions['rate'] ?? 0) / 100), 2);
+
+        if ($amount <= 0) return;
+
+        $ledger = CommissionLedger::create([
+            '{entityName}_id' => $actor->id,
+            'commission_type' => 'personal',
+            'level'           => null,
+            'amount'          => $amount,
+            'status'          => 'pending',
+            'ref_type'        => get_class($transaction),
+            'ref_id'          => $transaction->id,
+        ]);
+
+        CommissionEarned::dispatch($actor, $ledger);
+    }
+
+    protected function processLevel($actor, $transaction): void
+    {
+        $rule = CommissionRule::active()
+            ->where('commission_type', 'level')
+            ->forType($actor->type)
+            ->first();
+
+        if (! $rule) return;
+
+        $rates   = $rule->conditions['rates'] ?? [];
+        $current = $actor->parent;
+        $index   = 0;
+
+        while ($current !== null && $index < count($rates)) {
+            $rate   = (float) ($rates[$index]['rate'] ?? 0);
+            $amount = round($transaction->amount * ($rate / 100), 2);
+
+            if ($amount > 0) {
+                $ledger = CommissionLedger::create([
+                    '{entityName}_id' => $current->id,
+                    'commission_type' => 'level',
+                    'level'           => $index + 1,
+                    'amount'          => $amount,
+                    'status'          => 'pending',
+                    'ref_type'        => get_class($transaction),
+                    'ref_id'          => $transaction->id,
+                ]);
+
+                CommissionEarned::dispatch($current, $ledger);
+            }
+
+            $current = $current->parent;
+            $index++;
+        }
+    }
+
+    protected function processGroup($actor, $transaction): void
+    {
+        if (! $actor->parent) return;
+
+        $rule = CommissionRule::active()
+            ->where('commission_type', 'group')
+            ->forType($actor->type)
+            ->first();
+
+        if (! $rule) return;
+
+        $amount = round($transaction->amount * (($rule->conditions['rate'] ?? 0) / 100), 2);
+
+        if ($amount <= 0) return;
+
+        $parent = $actor->parent;
+
+        $ledger = CommissionLedger::create([
+            '{entityName}_id' => $parent->id,
+            'commission_type' => 'group',
+            'level'           => null,
+            'amount'          => $amount,
+            'status'          => 'pending',
+            'ref_type'        => get_class($transaction),
+            'ref_id'          => $transaction->id,
+        ]);
+
+        CommissionEarned::dispatch($parent, $ledger);
+    }
+}

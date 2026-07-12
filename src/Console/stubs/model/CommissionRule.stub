@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Models\AgentNetwork;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class CommissionRule extends Model
+{
+    protected $table = '{prefix}commission_rules';
+
+    protected $fillable = [
+        'commission_type', 'entity_type', 'active', 'conditions',
+    ];
+
+    protected $casts = [
+        'conditions' => 'array',
+        'active'     => 'boolean',
+    ];
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('active', true);
+    }
+
+    public function scopeForType(Builder $query, string $entityType): Builder
+    {
+        return $query->where(function (Builder $q) use ($entityType) {
+            $q->where('entity_type', $entityType)
+              ->orWhereNull('entity_type');
+        })->orderByRaw("entity_type IS NULL ASC");
+    }
+}

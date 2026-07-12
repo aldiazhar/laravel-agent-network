@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Listeners\AgentNetwork;
+
+use App\Events\AgentNetwork\CommissionEarned;
+use App\Models\AgentNetwork\{EntityName};
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+
+class OnCommissionEarned implements ShouldQueue
+{
+    use InteractsWithQueue;
+
+    public function handle(CommissionEarned $event): void
+    {
+        $actor  = $event->{entityName};
+        $ledger = $event->ledger;
+
+        // Hook: notify actor, update cached totals, trigger rank check, etc.
+        // Example: $actor->increment('lifetime_earnings', $ledger->amount);
+    }
+}

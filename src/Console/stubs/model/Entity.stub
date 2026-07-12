@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Models\AgentNetwork;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
+
+class {EntityName} extends Model
+{
+    protected $table = '{entity_table}';
+
+    protected $fillable = [
+        'ulid', 'parent_id', 'type', 'depth', 'name', 'email', 'status', 'meta',
+    ];
+
+    protected $casts = [
+        'meta'   => 'array',
+        'depth'  => 'integer',
+    ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $model) {
+            $model->ulid ??= Str::ulid();
+            if ($model->parent_id) {
+                $parent      = static::find($model->parent_id);
+                $model->depth = $parent ? $parent->depth + 1 : 0;
+            }
+        });
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(static::class, 'parent_id');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(static::class, 'parent_id');
+    }
+
+    public function ancestors(): Collection
+    {
+        $ancestors = collect();
+        $current   = $this->parent;
+
+        while ($current !== null) {
+            $ancestors->push($current);
+            $current = $current->parent;
+        }
+
+        return $ancestors;
+    }
+
+    public function scopeOfType(Builder $query, string $type): Builder
+    {
+        return $query->where('type', $type);
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', 'active');
+    }
+}

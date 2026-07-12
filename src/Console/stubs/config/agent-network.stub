@@ -1,0 +1,21 @@
+<?php
+
+return [
+
+    'network_name' => '{network_name}',
+
+    'entity' => [
+        'name'      => '{EntityName}',
+        'table'     => '{entity_table}',
+        'prefix'    => '{prefix}',
+        'types'     => {entity_types_php},
+        'max_depth' => {max_depth},
+    ],
+
+    'currency' => '{currency}',
+
+    'payout' => [
+        'schedule' => '{payout_schedule}',
+    ],
+
+];

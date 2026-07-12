@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Events\AgentNetwork;
+
+use App\Models\AgentNetwork\CommissionLedger;
+use App\Models\AgentNetwork\{EntityName};
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+
+class CommissionEarned
+{
+    use Dispatchable, SerializesModels;
+
+    public function __construct(
+        public readonly {EntityName} ${entityName},
+        public readonly CommissionLedger $ledger,
+    ) {}
+}

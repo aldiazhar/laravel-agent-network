@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Jobs\AgentNetwork;
+
+use App\Models\AgentNetwork\CommissionLedger;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+
+class ProcessPayoutBatch implements ShouldQueue
+{
+    use Queueable;
+
+    public function __construct(
+        public readonly ?string $actorId = null,
+        public readonly ?string $commissionType = null,
+    ) {}
+
+    public function handle(): void
+    {
+        $query = CommissionLedger::pending();
+
+        if ($this->actorId) {
+            $query->where('{entityName}_id', $this->actorId);
+        }
+
+        if ($this->commissionType) {
+            $query->where('commission_type', $this->commissionType);
+        }
+
+        $query->chunkById(100, function ($ledgers) {
+            foreach ($ledgers as $ledger) {
+                $this->processPayout($ledger);
+            }
+        });
+    }
+
+    protected function processPayout(CommissionLedger $ledger): void
+    {
+        // Implement your payout logic here (wallet credit, bank transfer, etc.)
+        // Once processed, mark the ledger as paid.
+        $ledger->update(['status' => 'paid', 'paid_at' => now()]);
+    }
+}

@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Models\AgentNetwork;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
+class CommissionLedger extends Model
+{
+    protected $table = '{prefix}commission_ledgers';
+
+    protected $fillable = [
+        '{entityName}_id', 'commission_type', 'level', 'amount', 'status', 'ref_type', 'ref_id', 'meta', 'paid_at',
+    ];
+
+    protected $casts = [
+        'amount'  => 'decimal:2',
+        'meta'    => 'array',
+        'paid_at' => 'datetime',
+    ];
+
+    public function {entityName}(): BelongsTo
+    {
+        return $this->belongsTo({EntityName}::class, '{entityName}_id');
+    }
+
+    public function ref(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    public function scopePending(Builder $query): Builder
+    {
+        return $query->where('status', 'pending');
+    }
+
+    public function scopePaid(Builder $query): Builder
+    {
+        return $query->where('status', 'paid');
+    }
+}

@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Models\AgentNetwork;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
+class Transaction extends Model
+{
+    protected $table = '{prefix}transactions';
+
+    protected $fillable = [
+        '{entityName}_id', 'amount', 'ref_type', 'ref_id',
+    ];
+
+    protected $casts = [
+        'amount' => 'decimal:2',
+    ];
+
+    public function {entityName}(): BelongsTo
+    {
+        return $this->belongsTo({EntityName}::class, '{entityName}_id');
+    }
+
+    public function ref(): MorphTo
+    {
+        return $this->morphTo();
+    }
+}
