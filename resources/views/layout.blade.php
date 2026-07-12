@@ -206,12 +206,7 @@
                class="an-nav-item {{ request()->routeIs('agent-network.commissions') ? 'active' : '' }}">
                 <span class="ani">percent</span> Commission Rules
             </a>
-            <a href="{{ route('agent-network.upgrades') }}"
-               class="an-nav-item {{ request()->routeIs('agent-network.upgrades') ? 'active' : '' }}">
-                <span class="ani">trending_up</span> Upgrade Rules
-            </a>
-
-            <div class="an-nav-group">Setup</div>
+<div class="an-nav-group">Setup</div>
             <a href="{{ route('agent-network.setup') }}"
                class="an-nav-item {{ request()->routeIs('agent-network.setup') ? 'active' : '' }}">
                 <span class="ani">construction</span> Generator
