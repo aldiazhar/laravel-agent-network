@@ -1,12 +1,12 @@
 {
-    "name": "agentnetwork/laravel-agent-network",
+    "name": "aldiazhar/laravel-agent-network",
     "description": "Multi-level agent commission engine generator for Laravel + Filament",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
-            "name": "Agent Network",
-            "email": "hello@agentnetwork.dev"
+            "name": "Aldi Azhar",
+            "email": "permana.azhar.aldi@gmail.com"
         }
     ],
     "require": {
